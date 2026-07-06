@@ -25,6 +25,9 @@ services:
       - wazuh-logs:/var/ossec/logs
       - wazuh-etc:/wazuh-config-mount/etc
       - wazuh-queue:/var/ossec/queue
+      # Customer Decoder and Rules
+      - ./wazuh-config/rules:/var/ossec/etc/rules:ro
+      - ./wazuh-config/decoders:/var/ossec/etc/decoders:ro
     environment:
       - TZ=Asia/Hong_Kong
     restart: unless-stopped
