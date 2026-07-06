@@ -103,8 +103,8 @@ wazuh-elastic-integration-filebeat9/
 ├── filebeat_resources/         # Shared volume: module downloaded at runtime
 │   └── module/wazuh/           # (populated by init-es)
 ├── templates/
-    ├── wazuh-template.json     # Downloaded from Wazuh GitHub (Legacy)
-    └── wazuh-template-es9.json # Converted for ES 9.x (Composable)
+│   ├── wazuh-template.json     # Downloaded from Wazuh GitHub (Legacy)
+│   └── wazuh-template-es9.json # Converted for ES 9.x (Composable)
 └── wazuh-config/               # Wazuh custom decoder and rules folder
     ├── decoder                 # Store custom decoders
     └── rules                   # Store custom rules
