@@ -1,0 +1,36 @@
+# Wazuh - Filebeat configuration file
+filebeat.modules:
+  - module: wazuh
+    alerts:
+      enabled: true
+    archives:
+      enabled: false
+
+# Auto-inject composable index template into Elasticsearch
+setup.template.json.enabled: true
+setup.template.json.path: '/etc/filebeat/wazuh-template.json'
+setup.template.json.name: 'wazuh'
+setup.template.overwrite: true
+
+output.elasticsearch:
+  # ⚠️ REPLACE with your Elasticsearch host
+  hosts: ['https://<YOUR_ES_HOST>:9200']
+  username: "wazuh_user"
+  password: "<YOUR_WAZUH_FILEBEAT_PASSWORD>"
+
+  # Skip TLS verification (for testing/internal environments)
+  ssl.verification_mode: none
+
+  # For production, use strict verification instead:
+  # ssl.verification_mode: full
+  # ssl.certificate_authorities: ["/etc/pki/root/ca.pem"]
+
+logging.metrics.enabled: false
+
+# Retain Wazuh's seccomp profile to avoid permission errors in containers
+seccomp:
+  default_action: allow
+  syscalls:
+  - action: allow
+    names:
+    - rseq

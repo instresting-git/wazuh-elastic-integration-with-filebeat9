@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # 1. Init container: downloads Filebeat module + provisions ES roles/users
+  init-es:
+    image: alpine:latest
+    container_name: init-es
+    volumes:
+      - ./init_es.sh:/init.sh:ro
+      # Shared volume: init-es writes, filebeat reads
+      - ./filebeat_resources:/resources
+    entrypoint: ["sh", "/init.sh"]
+    restart: "no"
+
+  # 2. Wazuh Manager
+  wazuh-manager:
+    image: wazuh/wazuh-manager:4.14.6
+    container_name: wazuh-manager
+    hostname: wazuh-manager
+    ports:
+      - "1514:1514/udp"
+      - "1515:1515"
+      - "514:514/udp"
+    volumes:
+      - wazuh-logs:/var/ossec/logs
+      - wazuh-etc:/wazuh-config-mount/etc
+      - wazuh-queue:/var/ossec/queue
+    environment:
+      - TZ=Asia/Hong_Kong
+    restart: unless-stopped
+
+  # 3. Filebeat 9.x
+  filebeat:
+    image: elastic/filebeat:9.4.3
+    container_name: filebeat-wazuh
+    user: "0:0"
+    depends_on:
+      init-es:
+        condition: service_completed_successfully
+    volumes:
+      - wazuh-logs:/var/ossec/logs:ro
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      # Mounts the module downloaded & extracted by init-es
+      - ./filebeat_resources/module/wazuh:/usr/share/filebeat/module/wazuh:ro
+      - ./templates/wazuh-template-es9.json:/etc/filebeat/wazuh-template.json:ro
+    restart: unless-stopped
+
+volumes:
+  wazuh-logs:
+  wazuh-etc:
+  wazuh-queue:
