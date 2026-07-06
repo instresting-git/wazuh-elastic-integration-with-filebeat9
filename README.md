@@ -27,7 +27,7 @@ git clone https://github.com/instresting-git/wazuh-elastic-integration-with-file
 cd wazuh-elastic-integration-with-filebeat9
 
 # Create required directories
-mkdir -p filebeat templates filebeat_resources wazuh-config/decoders wazuh-config/rules
+mkdir -p filebeat templates wazuh-config/decoders wazuh-config/rules
 ```
 
 ### 2. Download & Convert the Wazuh Index Template
